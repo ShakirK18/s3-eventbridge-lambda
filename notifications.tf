@@ -59,6 +59,8 @@ data "aws_iam_policy_document" "sns_topic_policy" {
 
     sid = "AllowEventBridgePublish"
   }
+
+#   above allows both accountID & service principal to push to sns topic - differentation is needed here to work
 }
 
 resource "aws_sns_topic_subscription" "email" {
