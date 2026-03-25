@@ -26,10 +26,7 @@ data "aws_iam_policy_document" "sns_topic_policy" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceOwner"
-
-      values = [
-        var.account_id,
-      ]
+      values   = [var.account_id]
     }
 
     effect = "Allow"
@@ -39,11 +36,28 @@ data "aws_iam_policy_document" "sns_topic_policy" {
       identifiers = ["*"]
     }
 
-    resources = [
-      aws_sns_topic.test.arn,
-    ]
+    resources = [aws_sns_topic.test.arn]
+    sid       = "__default_statement_ID"
+  }
 
-    sid = "__default_statement_ID"
+  statement {
+    actions = ["SNS:Publish"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+
+    resources = [aws_sns_topic.test.arn]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [module.eventbridge.eventbridge_rule_arns["s3_image_uploaded"]]
+    }
+
+    sid = "AllowEventBridgePublish"
   }
 }
 

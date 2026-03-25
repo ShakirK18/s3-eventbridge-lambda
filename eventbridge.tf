@@ -21,8 +21,13 @@ module "eventbridge" {
       {
         name = "process-image"
         arn  = aws_lambda_function.process_image.arn
+      },
+      {
+        name = "send-email"
+        arn = aws_sns_topic.test.arn
       }
     ]
+
   }
 
   tags = {
